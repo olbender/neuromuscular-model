@@ -96,12 +96,13 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/opendlv-standard-message-set.cpp
 # Add current build directory as include directory as it contains generated files.
 include_directories(SYSTEM ${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty)
 
 ################################################################################
 # Find ncurse
-# find_package( Curses REQUIRED )
-# include_directories( ${CURSES_INCLUDE_DIRS} )
-# set(LIBRARIES ${LIBRARIES} ${CURSES_LIBRARIES})
+find_package( Curses REQUIRED )
+include_directories( ${CURSES_INCLUDE_DIRS} )
+set(LIBRARIES ${LIBRARIES} ${CURSES_LIBRARIES})
 
 ################################################################################
 # Gather all object code first to avoid double compilation.

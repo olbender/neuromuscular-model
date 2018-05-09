@@ -15,6 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <Eigen/Eigen>
+#include <string>
+
 #include "muscle.hpp"
 
 class Body{
@@ -22,15 +25,19 @@ class Body{
   Body();
   ~Body();
 
+  void step(double const &);
   void setForceDisturbance(double const &);
   void setPhiReaching(double const &);
 
+
+  std::string toString();
  private:
   Body(const Body &) = delete;
   Body(Body &&) = delete;
   Body &operator=(const Body &) = delete;
   Body &operator=(Body &&) = delete;
 
+  Eigen::Vector3d m_state;
   double m_forceDisturbance;
   double m_phiReaching;
 

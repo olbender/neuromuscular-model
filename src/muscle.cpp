@@ -21,3 +21,8 @@ Muscle::Muscle()
 {}
 Muscle::~Muscle()
 {}
+
+std::string Muscle::toString()
+{
+  return "";
+}

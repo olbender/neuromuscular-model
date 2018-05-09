@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <ncurses.h>
+
 #include "cluon-complete.hpp"
 #include "opendlv-standard-message-set.hpp"
 
@@ -28,24 +30,44 @@ int32_t main(int32_t argc, char **argv) {
     std::cerr << "Usage:   " << argv[0] << " --freq=<Frequency> --cid=<od4 session> [--verbose]" << std::endl;
     std::cerr << "Example: " << argv[0] << " --freq=10 --cid=111" << std::endl;
     retCode = 1;
-  } else {
-    // bool const VERBOSE{commandlineArguments.count("verbose") != 0};
-    uint16_t const CID = std::stoi(commandlineArguments["cid"]);
-    float const FREQ = std::stof(commandlineArguments["freq"]);
+    return retCode;
+  } 
 
-    cluon::OD4Session od4{CID};
+  // bool const VERBOSE{commandlineArguments.count("verbose") != 0};
+  uint16_t const CID = std::stoi(commandlineArguments["cid"]);
+  double const FREQ = std::stod(commandlineArguments["freq"]);
+  double const DT = 1 / FREQ;
 
-    cluon::data::TimeStamp t0 = cluon::time::now();
-    auto atFrequency{[&t0]() -> bool
-      {
-        cluon::data::TimeStamp now = cluon::time::now();
-        double time = ((double) now.seconds() + (double) now.microseconds()/1000000.0 - (double) t0.seconds() + t0.microseconds()/1000000.0);
-        (void) time;
-        std::cout << "Seconds: " << (float) ((double) now.seconds() + (double) now.microseconds()/1000000.0 - ((double) t0.seconds() + (double) t0.microseconds()/1000000.0)) << std::endl;
-        return true;
-      }};
+  cluon::OD4Session od4{CID};
+  Body body;
 
-    od4.timeTrigger(FREQ, atFrequency);
-  }
+  initscr();
+
+  cluon::data::TimeStamp t0 = cluon::time::now();
+  auto atFrequency{[&t0, &body, &DT]() -> bool
+    {
+      cluon::data::TimeStamp now = cluon::time::now();
+      double time = ((double) now.seconds() + (double) now.microseconds()/1000000.0 - (double) t0.seconds() + t0.microseconds()/1000000.0);
+
+      if (time < 5) {
+        body.setForceDisturbance(0.0);
+      } else if (time < 10) {
+        body.setForceDisturbance(1.0);
+
+      } else if (time < 15) {
+        body.setForceDisturbance(-1.0);
+      } else {
+        body.setForceDisturbance(0.0);
+      }
+      body.step(DT);
+
+      mvprintw(1,0, ("Seconds: " + std::to_string(time)).c_str());
+      mvprintw(2,0, body.toString().c_str());
+      refresh();
+      return true;
+    }};
+
+  od4.timeTrigger((float) FREQ, atFrequency);
+  endwin();
   return retCode;
 }

@@ -15,10 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string>
+
 class Muscle{
  public:
   Muscle();
   ~Muscle();
+
+  std::string toString();
+
  private:
   Muscle(const Muscle &) = delete;
   Muscle(Muscle &&) = delete;
