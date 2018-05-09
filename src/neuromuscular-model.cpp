@@ -18,7 +18,7 @@
 #include "cluon-complete.hpp"
 #include "opendlv-standard-message-set.hpp"
 
-#include "muscle.hpp"
+#include "body.hpp"
 
 int32_t main(int32_t argc, char **argv) {
   int32_t retCode{0};
