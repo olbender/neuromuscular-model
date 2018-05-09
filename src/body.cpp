@@ -38,6 +38,11 @@ void Body::step(double const &a_dt)
 {
   Eigen::Vector3d const deltaState = Eigen::Vector3d(m_state[1],m_forceDisturbance,0) * a_dt; 
   m_state = m_state + deltaState;
+
+  m_muscleA.setForceDisturbance(m_forceDisturbance);
+  m_muscleB.setForceDisturbance(m_forceDisturbance);
+  m_muscleA.setPhiDot(m_state[1]);
+  m_muscleB.setPhiDot(-m_state[1]);
 }
 
 void Body::setForceDisturbance(double const &a_val)

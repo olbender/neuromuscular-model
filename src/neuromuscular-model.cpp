@@ -61,7 +61,7 @@ int32_t main(int32_t argc, char **argv) {
       }
       body.step(DT);
 
-      mvprintw(1,0, ("Seconds: " + std::to_string(time)).c_str());
+      mvprintw(1,0, ("Time: " + std::to_string(time)).c_str());
       mvprintw(2,0, body.toString().c_str());
       refresh();
       return true;

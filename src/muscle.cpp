@@ -15,14 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <sstream>
+
 #include "muscle.hpp"
 
 Muscle::Muscle()
+  : m_forceDisturbance{}
+  , m_phiDot{}
 {}
 Muscle::~Muscle()
 {}
 
+void Muscle::setForceDisturbance(double const &a_val)
+{
+  m_forceDisturbance = a_val;
+}
+
+void Muscle::setPhiDot(double const &a_val)
+{
+  m_phiDot = a_val;
+}
+
 std::string Muscle::toString()
 {
-  return "";
+  std::stringstream ss;
+  ss << "Force disturbance: " << m_forceDisturbance << std::endl;
+  ss << "\tPhi dot: " << m_phiDot << std::endl;
+  return ss.str();
 }

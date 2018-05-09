@@ -22,6 +22,9 @@ class Muscle{
   Muscle();
   ~Muscle();
 
+  void setForceDisturbance(double const &);
+  void setPhiDot(double const &);
+
   std::string toString();
 
  private:
@@ -29,4 +32,7 @@ class Muscle{
   Muscle(Muscle &&) = delete;
   Muscle &operator=(const Muscle &) = delete;
   Muscle &operator=(Muscle &&) = delete;
+
+  double m_forceDisturbance;
+  double m_phiDot;
 };
