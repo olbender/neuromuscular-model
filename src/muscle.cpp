@@ -22,7 +22,10 @@
 Muscle::Muscle()
   : m_forceDisturbance{}
   , m_phiDot{}
-{}
+  , m_fibers{}
+{
+  m_fibers.setLinSpaced(10000, 0, 1);
+}
 Muscle::~Muscle()
 {}
 
@@ -34,6 +37,13 @@ void Muscle::setForceDisturbance(double const &a_val)
 void Muscle::setPhiDot(double const &a_val)
 {
   m_phiDot = a_val;
+}
+
+double Muscle::twitch(double const &a_percent)
+{
+  uint32_t numFibers = (uint32_t) (a_percent * m_fibers.size());
+  double combinedMuscleTwitch = m_fibers.head(numFibers).sum();
+  return combinedMuscleTwitch;
 }
 
 std::string Muscle::toString()

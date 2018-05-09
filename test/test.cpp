@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ola Benderius
+ * Copyright (C) 2018  Björnborg Nguyen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,30 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <Eigen/Dense>
-#include <string>
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include "catch.hpp"
 
-class Muscle{
- public:
-  Muscle();
-  ~Muscle();
+#include "cluon-complete.hpp"
+#include "opendlv-standard-message-set.hpp"
 
-  void setForceDisturbance(double const &);
-  void setPhiDot(double const &);
-
-  std::string toString();
+#include "muscle.hpp"
 
 
- private:
-  Muscle(const Muscle &) = delete;
-  Muscle(Muscle &&) = delete;
-  Muscle &operator=(const Muscle &) = delete;
-  Muscle &operator=(Muscle &&) = delete;
+TEST_CASE("Test") {
+  REQUIRE(1 == 1);
+}
 
-  double m_forceDisturbance;
-  double m_phiDot;
-
-  Eigen::VectorXd m_fibers;
-
-  double twitch(double const &);
-};
