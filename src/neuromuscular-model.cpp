@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ola Benderius
+ * Copyright (C) 2018 Ola Benderius, Björnborg Nguyen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ncurses.h>
+#include <Eigen/Dense>
 
 #include "cluon-complete.hpp"
 #include "opendlv-standard-message-set.hpp"
 
-#include "body.hpp"
+#include "muscle.hpp"
 
 int32_t main(int32_t argc, char **argv) {
   int32_t retCode{0};
@@ -35,39 +35,40 @@ int32_t main(int32_t argc, char **argv) {
 
   // bool const VERBOSE{commandlineArguments.count("verbose") != 0};
   uint16_t const CID = std::stoi(commandlineArguments["cid"]);
-  double const FREQ = std::stod(commandlineArguments["freq"]);
-  double const DT = 1 / FREQ;
+  float const FREQ = std::stof(commandlineArguments["freq"]);
+  // double const DT = 1 / FREQ;
+
+
+
+
 
   cluon::OD4Session od4{CID};
-  Body body;
+  Muscle biceps;
 
-  initscr();
+  // od4.send(test, cluon::time::now(), 0);
+  auto onPressureRequest{[&biceps](cluon::data::Envelope &&envelope)
+  {
+    if (envelope.senderStamp() == 1) {
+      biceps.Stimulate();
+    }
+  }};
+  od4.dataTrigger(opendlv::proxy::PressureRequest::ID(), onPressureRequest);
+
 
   cluon::data::TimeStamp t0 = cluon::time::now();
-  auto atFrequency{[&t0, &body, &DT]() -> bool
+  auto atFrequency{[&biceps, &od4]() -> bool
     {
-      cluon::data::TimeStamp now = cluon::time::now();
-      double time = ((double) now.seconds() + (double) now.microseconds()/1000000.0 - (double) t0.seconds() + t0.microseconds()/1000000.0);
+      // cluon::data::TimeStamp now = cluon::time::now();
+      // double time = ((double) now.seconds() + (double) now.microseconds()/1000000.0 - (double) t0.seconds() + t0.microseconds()/1000000.0);
 
-      if (time < 5) {
-        body.setForceDisturbance(0.0);
-      } else if (time < 10) {
-        body.setForceDisturbance(1.0);
+      // 
+      opendlv::proxy::PressureReading tensionMsg;
+      tensionMsg.pressure(biceps.GetForcef());
+      od4.send(tensionMsg, cluon::time::now(), 0);
 
-      } else if (time < 15) {
-        body.setForceDisturbance(-1.0);
-      } else {
-        body.setForceDisturbance(0.0);
-      }
-      body.step(DT);
-
-      mvprintw(1,0, ("Time: " + std::to_string(time)).c_str());
-      mvprintw(2,0, body.toString().c_str());
-      refresh();
       return true;
     }};
 
-  od4.timeTrigger((float) FREQ, atFrequency);
-  endwin();
+  od4.timeTrigger(FREQ, atFrequency);
   return retCode;
 }

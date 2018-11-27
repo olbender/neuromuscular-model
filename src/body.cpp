@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ola Benderius
+ * Copyright (C) 2018 Ola Benderius, Björnborg Nguyen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,14 @@ Body::Body()
 Body::~Body()
 {}
 
+Eigen::Vector3d Body::getState() const
+{
+  return m_state;
+}
+
 void Body::step(double const &a_dt)
 {
-  Eigen::Vector3d const deltaState = Eigen::Vector3d(m_state[1],m_forceDisturbance,0) * a_dt; 
+  Eigen::Vector3d const deltaState = Eigen::Vector3d(m_state[1], m_forceDisturbance, 0) * a_dt; 
   m_state = m_state + deltaState;
 
   m_muscleA.setForceDisturbance(m_forceDisturbance);
@@ -56,6 +61,7 @@ void Body::setPhiReaching(double const &a_val)
 {
   m_phiReaching = a_val;
 }
+
 
 std::string Body::toString()
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ola Benderius
+ * Copyright (C) 2018 Ola Benderius, Björnborg Nguyen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ class Body{
   Body();
   ~Body();
 
+  Eigen::Vector3d getState() const;
   void step(double const &);
   void setForceDisturbance(double const &);
   void setPhiReaching(double const &);

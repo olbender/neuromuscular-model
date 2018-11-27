@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ola Benderius
+ * Copyright (C) 2018 Ola Benderius, Björnborg Nguyen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 #include <Eigen/Dense>
 #include <string>
+#include <vector>
+#include "cluon-complete.hpp"
 
 class Muscle{
  public:
@@ -28,6 +30,9 @@ class Muscle{
 
   std::string toString();
 
+  void Stimulate();
+  double GetForce();
+  float GetForcef();
 
  private:
   Muscle(const Muscle &) = delete;
@@ -39,6 +44,11 @@ class Muscle{
   double m_phiDot;
 
   Eigen::VectorXd m_fibers;
+  uint32_t const m_numFibers;
+  double m_tension;
+  std::vector<double> const m_periods;
+  cluon::data::TimeStamp m_lastStimulii;
+
 
   double twitch(double const &);
 };

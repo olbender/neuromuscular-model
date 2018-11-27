@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Ola Benderius
+ * Copyright (C) 2018 Ola Benderius, Björnborg Nguyen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 
 #include <sstream>
+#include <random>
 
 #include "muscle.hpp"
 
@@ -23,8 +24,13 @@ Muscle::Muscle()
   : m_forceDisturbance{}
   , m_phiDot{}
   , m_fibers{}
+  , m_numFibers{100}
+  , m_tension{0}
+  , m_periods{0.010, 0.020, 0.070}
+  , m_lastStimulii{cluon::time::now()}
 {
-  m_fibers.setLinSpaced(10000, 0, 1);
+  m_fibers.setLinSpaced(m_numFibers, 0, 1);
+
 }
 Muscle::~Muscle()
 {}
@@ -41,9 +47,24 @@ void Muscle::setPhiDot(double const &a_val)
 
 double Muscle::twitch(double const &a_percent)
 {
-  uint32_t numFibers = (uint32_t) (a_percent * m_fibers.size());
-  double combinedMuscleTwitch = m_fibers.head(numFibers).sum();
-  return combinedMuscleTwitch;
+  uint32_t numFibers = static_cast<uint32_t>((a_percent * m_fibers.size()));
+  double combinedMuscleTwitchForce = m_fibers.head(numFibers).sum();
+  return combinedMuscleTwitchForce;
+}
+
+void Muscle::Stimulate()
+{
+  m_lastStimulii = cluon::time::now();
+}
+
+double Muscle::GetForce()
+{
+  return 0.0;
+}
+
+float Muscle::GetForcef()
+{
+  return static_cast<float>(GetForce());
 }
 
 std::string Muscle::toString()
