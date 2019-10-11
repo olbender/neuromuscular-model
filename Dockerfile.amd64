@@ -1,4 +1,4 @@
-# Copyright (C) 2018  Ola Bednerius, Björnborg Nguyen
+# Copyright (C) 2019 Ola Benderius
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,38 +13,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-FROM alpine:edge AS builder
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+FROM archlinux/base as builder
+RUN pacman -Sy --noconfirm opencv cmake base-devel gtk3 eigen
 
-RUN apk update && \
-    apk --no-cache add \
-        cmake \
-        g++ \
-        upx \
-        ccache \
-        # ncurses-dev \
-        upx \
-        make
-
-RUN apk add libcluon --no-cache --repository https://chrberger.github.io/libcluon/alpine/v3.7 --allow-untrusted
 
 ADD . /opt/sources
 WORKDIR /opt/sources
-RUN rm -rf build && \
-    mkdir build && \
+RUN mkdir build && \
     cd build && \
-    cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/tmp/neuromuscular-model-dest .. && \
-    make -j4 && make install && upx -9 /tmp/neuromuscular-model-dest/bin/neuromuscular-model
+    cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/tmp .. && \
+    make && make install
 
 
+FROM archlinux/base
+RUN pacman -Sy --noconfirm opencv gtk3
 
-FROM alpine:edge
-# RUN apk update && \
-#     apk --no-cache add \
-#     ncurses-dev 
 WORKDIR /usr/bin
-COPY --from=builder /tmp/neuromuscular-model-dest/ /usr/
-LABEL authors="Ola Benderius, Björnborg Nguyen"
-CMD ["/usr/bin/neuromuscular-model"]
-
-
+COPY --from=builder /tmp/bin/opendlv-logic-control-twomusclemodel .
+ENTRYPOINT ["/usr/bin/opendlv-logic-control-twomusclemodel"]
