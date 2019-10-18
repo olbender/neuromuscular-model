@@ -33,7 +33,8 @@ struct Muscle {
   double force;
   double velocity;
   double length;
-}
+};
+
 /*
 struct Reaching {
   double onset;
